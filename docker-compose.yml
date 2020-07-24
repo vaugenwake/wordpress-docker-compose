@@ -5,7 +5,7 @@ networks:
 
 services:
   wp:
-    image: wordpress:latest # https://hub.docker.com/_/wordpress/
+    image: vaugenwake/wordpress-mailhog
     ports:
       - 8080:80 # change ip if required
     volumes:
@@ -36,16 +36,12 @@ services:
     networks:
       - wordpress
 
-  pma:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      # https://docs.phpmyadmin.net/en/latest/setup.html#docker-environment-variables
-      PMA_HOST: db
-      PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - 8083:80
-    links:
+      - 8083:8080
+    links: 
       - db:db
     networks:
       - wordpress
@@ -67,6 +63,14 @@ services:
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"  
     networks:
       - wordpress
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+        - 1025:1025
+        - 8025:8025
+    networks:
+        - wordpress
 
 volumes:
   db_data:
