@@ -1,5 +1,8 @@
 version: '3'
 
+networks: 
+  wordpress:
+
 services:
   wp:
     image: wordpress:latest # https://hub.docker.com/_/wordpress/
@@ -19,6 +22,8 @@ services:
       - db
     links:
       - db
+    networks:
+      - wordpress
 
   wpcli:
     image: wordpress:cli
@@ -28,6 +33,8 @@ services:
     depends_on:
       - db
       - wp
+    networks:
+      - wordpress
 
   pma:
     image: phpmyadmin/phpmyadmin
@@ -40,6 +47,8 @@ services:
       - 8083:80
     links:
       - db:db
+    networks:
+      - wordpress
 
   db:
     image: mysql:latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb
@@ -55,7 +64,9 @@ services:
       - db_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"  
+    networks:
+      - wordpress
 
 volumes:
   db_data:
